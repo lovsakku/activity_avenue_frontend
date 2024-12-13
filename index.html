@@ -7,6 +7,7 @@
     <script src="https://unpkg.com/vue@2.7.8/dist/vue.js"></script>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="app.js"></script
 </head>
 <body>
 <div id="app">
@@ -15,12 +16,12 @@
         <p>Welcome to Activity Avenue, your go-to platform for discovering and booking exciting after-school activities and classes for students. Whether you're looking for creative arts, sports, or tutoring sessions, we have it all! Browse, sort, and book the perfect activities for your child with just a few clicks!</p>
         <div class="sorting">
             <label for="sort">Sort by:</label>
-            <select v-model="sortBy" id="sort" v-model="searchKey">
+            <select v-model="sortBy" id="sort" @change="setSort">
                 <option value="price">Price</option>
                 <option value="location">Location</option>
                 <option value="availableSpots">Available Spots</option>
             </select>
-            <select v-model="sortOrder" id="order" v-model="searchKey">
+            <select v-model="sortOrder" id="order" @change="setSort">
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
             </select>
@@ -35,12 +36,12 @@
 
     <main>
         <div class="search-bar">
-            <button v-on:click="searchResults" for="search">Search:</button>
+            <label for="search">Search:</label>
             <input type="text" v-model="searchQuery" id="search" placeholder="Search by title, location, or price"/>
         </div>
         <div v-if="showProduct">
             <div class="grid">
-                <div v-for="classItem in sortedClasses" class="class-card">
+                <div v-for="classItem in sortedClasses" :key="classItem.id" class="class-card">
                     <figure>
                         <img v-bind:src="classItem.image" alt="Class Image">
                     </figure>
@@ -116,6 +117,6 @@
     
     </main>
 </div>
+</script>
 </body>
-<script src="app.js"></script>
 </html>
