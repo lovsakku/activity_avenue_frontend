@@ -381,7 +381,8 @@
           async fetchActivities() {
             try {
               const response = await fetch(
-                "http://localhost:3000/collection/lessons"
+                "https://whole-39zn.onrender.com/collection/lessons"
+                
               );
               const data = await response.json();
               this.activities = data.activities || [];
@@ -424,7 +425,7 @@
           async submitOrder() {
             try {
               const response = await fetch(
-                "http://localhost:3000/place-order",
+                "https://whole-39zn.onrender.com/place-order",
                 {
                   method: "POST",
                   headers: {
