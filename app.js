@@ -28,18 +28,19 @@ var app = new Vue({
         sortOrder: 'asc',  // Default sorting order
         searchQuery: ''  // Search query for filtering the classes
     },
+
+    created() {
+        fetch('https://activity-avenue-backend.onrender.com/collection/products')
+            .then(response => response.json())
+            .then(lessonData => {
+                this.classes = lessonData.filter((item) => item.availableSpots > 0);
+            })
+            .catch(error => {
+                console.error('Error fetching products:', error);
+            });
+    },
+
     methods: {
-        // Fetch classes from the backend using fetch API
-        fetchClasses() {
-            fetch('http://localhost:3001/products')  // Adjust your backend URL if necessary
-                .then(response => response.json())   // Parse the JSON response
-                .then(data => {
-                    this.classes = data;  // Assign fetched data to the classes array
-                })
-                .catch(error => {
-                    console.error('Error fetching classes:', error);
-                });
-        },
         addToCart(classItem) {
             this.cart.push(classItem.id);  // Add the class to the cart using its ID
         },
@@ -64,11 +65,11 @@ var app = new Vue({
                 region: this.order.region,
                 method: this.order.method,
                 gift: this.order.gift,
-                items: this.cart,  
+                items: this.cart,  // Include the cart items in the order
             };
         
             // Send order data to the backend
-            fetch('http://localhost:3001/orders', {
+            fetch('https://activity-avenue-backend.onrender.com/orders', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,41 +110,33 @@ var app = new Vue({
                 return acc;
             }, {});
         },
-        sortedClasses() {
-            let classesArray = this.classes.slice(0);  // Create a copy of the classes array to sort
-            const sortOrder = this.sortOrder === 'asc' ? 1 : -1;
+        searchResults() {
+            fetch(`https://activity-avenue-backend.onrender.com/collection/products/search?value=${this.searchKey}`)
+                .then(response => response.json())
+                .then(lessonData => {
+                    this.classes = lessonData.filter((item) => item.availableSpots > 0); // > 0 = out of stock (filter out the out of stock items)
+                })
+                .catch(error => {
+                    console.error('Error fetching filtered lessons:', error);
+                });
+            },
+            sortedClasses() {
+                return this.classes.slice().sort((a, b) => {
+                    let valA = a[this.sortAttribute];
+                    let valB = b[this.sortAttribute];
+                    if (typeof valA === "string" && typeof valB === "string") {
+                        valA = valA.toLowerCase();
+                        valB = valB.toLowerCase();
+                    }
 
-            // Filter classes based on the search query
-            if (this.searchQuery) {
-                classesArray = classesArray.filter(classItem => {
-                    const searchQueryLower = this.searchQuery.toLowerCase();
-                    return classItem.title.toLowerCase().includes(searchQueryLower) ||
-                        classItem.location.toLowerCase().includes(searchQueryLower) ||
-                        classItem.price.toString().includes(searchQueryLower);
+                    if (this.sortOrder === "ascending") {
+                        return valA > valB ? 1 : valA < valB ? -1 : 0;
+                    } else {
+                        return valA < valB ? 1 : valA > valB ? -1 : 0;
+                    }
                 });
             }
 
-            // Sort based on the selected property
-            classesArray.sort((a, b) => {
-                let comparison = 0;
-
-                if (this.sortBy === 'subject') {
-                    comparison = a.subject.localeCompare(b.subject);
-                } else if (this.sortBy === 'price') {
-                    comparison = a.price - b.price;
-                } else if (this.sortBy === 'location') {
-                    comparison = a.location.localeCompare(b.location);
-                } else if (this.sortBy === 'availableSpots') {
-                    comparison = a.availableSpots - b.availableSpots;
-                }
-
-                return comparison * sortOrder;
-            });
-
-            return classesArray;
         }
     },
-    created() {
-        this.fetchClasses();  // Fetch classes when the Vue app is mounted
-    }
-});
+);

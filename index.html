@@ -15,12 +15,12 @@
         <p>Welcome to Activity Avenue, your go-to platform for discovering and booking exciting after-school activities and classes for students. Whether you're looking for creative arts, sports, or tutoring sessions, we have it all! Browse, sort, and book the perfect activities for your child with just a few clicks!</p>
         <div class="sorting">
             <label for="sort">Sort by:</label>
-            <select v-model="sortBy" id="sort" @change="setSort">
+            <select v-model="sortBy" id="sort" v-model="searchKey">
                 <option value="price">Price</option>
                 <option value="location">Location</option>
                 <option value="availableSpots">Available Spots</option>
             </select>
-            <select v-model="sortOrder" id="order" @change="setSort">
+            <select v-model="sortOrder" id="order" v-model="searchKey">
                 <option value="asc">Ascending</option>
                 <option value="desc">Descending</option>
             </select>
@@ -35,12 +35,12 @@
 
     <main>
         <div class="search-bar">
-            <label for="search">Search:</label>
+            <button v-on:click="searchResults" for="search">Search:</button>
             <input type="text" v-model="searchQuery" id="search" placeholder="Search by title, location, or price"/>
         </div>
         <div v-if="showProduct">
             <div class="grid">
-                <div v-for="classItem in sortedClasses" :key="classItem.id" class="class-card">
+                <div v-for="classItem in sortedClasses" class="class-card">
                     <figure>
                         <img v-bind:src="classItem.image" alt="Class Image">
                     </figure>
@@ -116,7 +116,6 @@
     
     </main>
 </div>
-
-<script src="/app.js"></script>
 </body>
+<script src="app.js"></script>
 </html>
