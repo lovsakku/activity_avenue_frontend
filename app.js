@@ -64,7 +64,7 @@ var app = new Vue({
                 region: this.order.region,
                 method: this.order.method,
                 gift: this.order.gift,
-                items: this.cart,  // Include the cart items in the order
+                items: this.cart,  
             };
         
             // Send order data to the backend
